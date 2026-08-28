@@ -13,7 +13,9 @@ chrome.idle.onStateChanged.addListener((newState) => {
       const nextDate = result.nextClaimDate || 0;
       if (Date.now() >= nextDate) {
         isProcessing = true;
-        chrome.tabs.create({ url: "https://play.google.com/store/points/perks", active: false });
+        chrome.storage.local.set({ autoRunFlag: Date.now() }, () => {
+          chrome.tabs.create({ url: "https://play.google.com/store/points/perks", active: false });
+        });
         setTimeout(() => { isProcessing = false; }, 60000);
       }
     });

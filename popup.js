@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  chrome.storage.local.get(['claimCount', 'nextClaimDate'], (result) => {
+  chrome.storage.local.get(['claimCount', 'nextClaimDate', 'dateString'], (result) => {
     const countEl = document.getElementById('count');
     const dateEl = document.getElementById('date');
 
@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
       countEl.innerText = result.claimCount;
     }
 
-    if (result.nextClaimDate) {
+    if (result.dateString && result.dateString !== '尚未取得資料') {
+      dateEl.innerText = result.dateString;
+    } else if (result.nextClaimDate) {
       const d = new Date(result.nextClaimDate);
       dateEl.innerText = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
     } else {
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('checkBtn').addEventListener('click', () => {
-    chrome.tabs.create({ url: "https://play.google.com/store/points/perks", active: true });
+    chrome.storage.local.set({ autoRunFlag: Date.now() }, () => {
+      chrome.tabs.create({ url: "https://play.google.com/store/points/perks", active: true });
+    });
   });
 });

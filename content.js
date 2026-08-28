@@ -47,6 +47,7 @@ const intervalId = setInterval(() => {
     const dateEl = document.querySelector('.WNhI5e');
     let targetDate = 0;
     let dateFound = false;
+    let displayString = '';
     
     if (dateEl) {
       const match = dateEl.textContent.match(/(\d+)月(\d+)日/);
@@ -54,15 +55,23 @@ const intervalId = setInterval(() => {
         const currentYear = new Date().getFullYear();
         targetDate = new Date(currentYear, parseInt(match[1]) - 1, parseInt(match[2])).getTime();
         dateFound = true;
+        displayString = match[1] + '月' + match[2] + '日';
       }
     }
 
     if (dateFound || attempts >= 10) {
       clearInterval(intervalId);
       
-      chrome.storage.local.get(['claimCount', 'nextClaimDate'], (result) => {
+      chrome.storage.local.get(['claimCount', 'nextClaimDate', 'dateString', 'autoRunFlag'], (result) => {
         let count = result.claimCount || 0;
         let nextDate = result.nextClaimDate || 0;
+        let finalStr = dateFound ? displayString : (result.dateString || '尚未取得資料');
+        let shouldAutoClose = false;
+        
+        if (result.autoRunFlag && (Date.now() - result.autoRunFlag < 15000)) {
+          shouldAutoClose = true;
+          chrome.storage.local.remove('autoRunFlag');
+        }
         
         if (isSuccessfullyClaimed) {
           count += 1;
@@ -72,10 +81,16 @@ const intervalId = setInterval(() => {
           nextDate = targetDate;
         }
         
-        chrome.storage.local.set({ nextClaimDate: nextDate, claimCount: count }, () => {
-          setTimeout(() => {
-            chrome.runtime.sendMessage({ action: 'closeTab' });
-          }, 500);
+        chrome.storage.local.set({ 
+          nextClaimDate: nextDate, 
+          claimCount: count,
+          dateString: finalStr
+        }, () => {
+          if (shouldAutoClose) {
+            setTimeout(() => {
+              chrome.runtime.sendMessage({ action: 'closeTab' });
+            }, 500);
+          }
         });
       });
     }
