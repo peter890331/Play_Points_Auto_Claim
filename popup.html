@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { 
+      width: 280px; 
+      margin: 0; 
+      padding: 16px; 
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      color: #333;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+    .header img {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    .card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #dadce0;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #5f6368;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1a73e8;
+      margin-bottom: 12px;
+    }
+    .btn {
+      width: 100%;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #1557b0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icon.png" alt="icon">
+    Play Points 自動領取
+  </div>
+  <div class="card">
+    <div class="stat-label">已經自動領取次數：</div>
+    <div class="stat-value"><span id="count">0</span> 次</div>
+    <div class="stat-label">下次自動領取日期：</div>
+    <div class="stat-value" id="date" style="margin-bottom: 0;">檢查中...</div>
+  </div>
+  <button class="btn" id="checkBtn">立即檢查與領取</button>
+  <script src="popup.js"></script>
+</body>
+</html>
