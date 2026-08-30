@@ -1,5 +1,6 @@
 # Play Points Auto Claim
-專為台灣介面打造，在電腦閒置期間 自動領取 Play Points! 🙂‍↕️
+Auto Claim Play Points during computer idle time! 🙂‍↕️    
+在電腦閒置期間 自動領取 Play Points! 🙂‍↕️
 
 ---
 一個自動領 Play Points 的擴充功能，因為我常常忘記領，也確實懶得手動領。
