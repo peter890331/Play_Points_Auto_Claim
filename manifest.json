@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "自動領取 Play Points!",
-  "description": "專為台灣介面打造，在電腦閒置期間 \"自動領取 Play Points!\" 🙂‍↕️",
+  "name": "Auto Claim Play Points!",
+  "description": "Auto Claim Play Points during computer idle time! 🙂‍↕️",
   "version": "1.0",
   "permissions": ["idle", "storage", "tabs"],
   "host_permissions": ["https://play.google.com/store/points/perks"],

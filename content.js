@@ -44,55 +44,55 @@ const intervalId = setInterval(() => {
       attempts = 0;
     }
   } else if (step === 3) {
-    const dateEl = document.querySelector('.WNhI5e');
-    let targetDate = 0;
-    let dateFound = false;
-    let displayString = '';
+    clearInterval(intervalId);
+    const isChinese = navigator.language.startsWith('zh');
+    const noDataText = isChinese ? '尚未取得資料' : 'No data available';
     
-    if (dateEl) {
-      const match = dateEl.textContent.match(/(\d+)月(\d+)日/);
-      if (match) {
-        const currentYear = new Date().getFullYear();
-        targetDate = new Date(currentYear, parseInt(match[1]) - 1, parseInt(match[2])).getTime();
-        dateFound = true;
-        displayString = match[1] + '月' + match[2] + '日';
-      }
-    }
-
-    if (dateFound || attempts >= 10) {
-      clearInterval(intervalId);
+    chrome.storage.local.get(['claimCount', 'nextClaimDate', 'dateString', 'autoRunFlag'], (result) => {
+      let count = result.claimCount || 0;
+      let nextDate = result.nextClaimDate || 0;
+      let finalStr = result.dateString || noDataText;
+      let shouldAutoClose = false;
       
-      chrome.storage.local.get(['claimCount', 'nextClaimDate', 'dateString', 'autoRunFlag'], (result) => {
-        let count = result.claimCount || 0;
-        let nextDate = result.nextClaimDate || 0;
-        let finalStr = dateFound ? displayString : (result.dateString || '尚未取得資料');
-        let shouldAutoClose = false;
-        
-        if (result.autoRunFlag && (Date.now() - result.autoRunFlag < 15000)) {
-          shouldAutoClose = true;
-          chrome.storage.local.remove('autoRunFlag');
+      if (result.autoRunFlag && (Date.now() - result.autoRunFlag < 15000)) {
+        shouldAutoClose = true;
+        chrome.storage.local.remove('autoRunFlag');
+      }
+      
+      const now = new Date();
+      const currentDay = now.getDay();
+      let daysUntilFriday = (5 - currentDay + 7) % 7;
+      if (daysUntilFriday === 0) {
+        daysUntilFriday = 7;
+      }
+      
+      const nextFridayTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilFriday).getTime();
+      const nextFridayString = new Date(nextFridayTime).toLocaleDateString();
+
+      if (isSuccessfullyClaimed) {
+        count += 1;
+        nextDate = nextFridayTime;
+        finalStr = nextFridayString;
+      } else {
+        if (nextDate === 0) {
+          nextDate = nextFridayTime;
+          finalStr = nextFridayString;
+        } else if (Date.now() >= nextDate) {
+          nextDate = Date.now() + 6 * 60 * 60 * 1000;
         }
-        
-        if (isSuccessfullyClaimed) {
-          count += 1;
+      }
+      
+      chrome.storage.local.set({ 
+        nextClaimDate: nextDate, 
+        claimCount: count,
+        dateString: finalStr
+      }, () => {
+        if (shouldAutoClose) {
+          setTimeout(() => {
+            chrome.runtime.sendMessage({ action: 'closeTab' });
+          }, 500);
         }
-        
-        if (dateFound && targetDate !== 0) {
-          nextDate = targetDate;
-        }
-        
-        chrome.storage.local.set({ 
-          nextClaimDate: nextDate, 
-          claimCount: count,
-          dateString: finalStr
-        }, () => {
-          if (shouldAutoClose) {
-            setTimeout(() => {
-              chrome.runtime.sendMessage({ action: 'closeTab' });
-            }, 500);
-          }
-        });
       });
-    }
+    });
   }
 }, 200);
