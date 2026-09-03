@@ -6,39 +6,39 @@ const intervalId = setInterval(() => {
   attempts++;
   
   if (step === 1) {
-    const elements = document.querySelectorAll('span, div');
+    const rewardCard = document.querySelector('div[jscontroller="KRZHBd"]');
     let clicked = false;
-    for (let el of elements) {
-      if (el.textContent.trim() === '領取') {
-        const btn = el.closest('button, [role="button"]');
-        if (btn) {
-          btn.removeAttribute('inert');
-          el.click();
-          btn.click();
-          clicked = true;
-          step = 2;
-          attempts = 0;
-          break;
-        }
+    
+    if (rewardCard) {
+      const btn = rewardCard.querySelector('button');
+      const span = rewardCard.querySelector('span[jsname="V67aGc"]');
+      
+      if (btn) {
+        btn.removeAttribute('inert');
+        if (span) span.click();
+        btn.click();
+        clicked = true;
+        step = 2;
+        attempts = 0;
       }
     }
+    
     if (!clicked && attempts >= 15) {
       step = 3;
       attempts = 0;
     }
   } else if (step === 2) {
-    const elements = document.querySelectorAll('div');
+    const chestBtn = document.querySelector('button[jslog*="TE9ZQUxUWV9SRVdBUkRf"]');
     let chestClicked = false;
-    for (let el of elements) {
-      if (el.textContent.trim() === '按一下即可查看獎勵內容！') {
-        el.click();
-        chestClicked = true;
-        isSuccessfullyClaimed = true;
-        step = 3;
-        attempts = 0;
-        break;
-      }
+    
+    if (chestBtn) {
+      chestBtn.click();
+      chestClicked = true;
+      isSuccessfullyClaimed = true;
+      step = 3;
+      attempts = 0;
     }
+    
     if (!chestClicked && attempts >= 15) {
       step = 3;
       attempts = 0;
